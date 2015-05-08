@@ -28,6 +28,10 @@
 extern "C" {
 #endif
 
+
+/*****************************************************************************/
+
+
 #include <fcntl.h>
 #include <setjmp.h>
 #include <stdbool.h>
@@ -43,7 +47,6 @@ extern "C" {
  * CONSTANTS DEFINITION
  */
 
-
 #define TESTBENCH_ERROR_STRING_MAX_LEN  255
 #define TESTBENCH_ERROR_BUF_LEN         255
 
@@ -51,7 +54,6 @@ extern "C" {
 /******************************************************************************
  * ANSI COLORS
  */
-
 
 #define TESTBENCH_ANSI_RESET            "\x1b[0m"
 #define TESTBENCH_ANSI_BOLD             "\x1b[1m"
@@ -64,7 +66,6 @@ extern "C" {
 /******************************************************************************
  * TYPES
  */
-
 
 /**
  * Indicates the type of block currently on top of the stack.
@@ -87,7 +88,6 @@ typedef enum testbench_block_type_e {
   BLOCK_IT
 
 } testbench_block_type_t;
-
 
 /**
  * The per-block context of the test.
@@ -126,7 +126,6 @@ typedef struct testbench_block_context_s {
 
 } testbench_block_context_t;
 
-
 /**
  * The global context of the test.
  */
@@ -154,7 +153,6 @@ typedef struct testbench_global_context_s {
  * STATIC VARIABLES
  */
 
-
 /**
  * The root context.
  */
@@ -168,7 +166,6 @@ testbench_block_context_t __testbench_root_context = {
   .teardown_udata = NULL
 };
 
-
 /**
  * Stack-allocated global context.
  */
@@ -178,7 +175,6 @@ testbench_global_context_t __testbench_global_context_tmp = {
   .failed = 0,
   .block_context = &__testbench_root_context
 };
-
 
 /**
  * The global context, initialized to the initial global context we just defined.
@@ -190,7 +186,6 @@ testbench_global_context_t * __testbench_global_context = &__testbench_global_co
 /******************************************************************************
  * STATIC FUNCTIONS
  */
-
 
 /**
  * Print an error message, observing the correct indentation level.
@@ -224,7 +219,6 @@ void _testbench_print_error(int stream, uint32_t level) {
  * HELPER MACROS
  */
 
-
 /**
  * Print a formatted line, observing the current context indentation level.
  */
@@ -245,7 +239,6 @@ void _testbench_print_error(int stream, uint32_t level) {
  * CONTROL MACROS
  */
 
-
 /**
  * Independent test function.
  */
@@ -255,13 +248,11 @@ void _testbench_print_error(int stream, uint32_t level) {
     __test_block; \
   }
 
-
 /**
  * Run a test function inside the current test context.
  */
 #define RUN(__name, __udata) \
   (_testbench_block_ ## __name (__testbench_global_context, (__udata)))
-
 
 /**
  * Enter new block.
@@ -282,7 +273,6 @@ void _testbench_print_error(int stream, uint32_t level) {
     __describe_block; \
     __testbench_global_context->block_context = __testbench_parent_context; \
   }
-
 
 /**
  * Actual test context.
@@ -364,7 +354,6 @@ void _testbench_print_error(int stream, uint32_t level) {
     __testbench_global_context->block_context = __testbench_parent_context; \
   }
 
-
 /**
  * Print the results, and return the program exit code.
  */
@@ -395,7 +384,6 @@ void _testbench_print_error(int stream, uint32_t level) {
     __testbench_global_context->block_context->setup_udata = (__udata); \
   })
 
-
 /**
  * Set the teardown function, in the current context.
  */
@@ -410,12 +398,10 @@ void _testbench_print_error(int stream, uint32_t level) {
  * BASIC ASSERTION MACROS
  */
 
-
 /**
  * Consider the current test as a success, not execuring any further instructions.
  */
 #define PASS() longjmp(__testbench_jmp_buf, 2)
-
 
 /**
  * Consider the current test as a failure, not execuring any further instructions, with a custom formatted error
@@ -428,12 +414,10 @@ void _testbench_print_error(int stream, uint32_t level) {
     longjmp(__testbench_jmp_buf, 1); \
   })
 
-
 /**
  * Consider the current test as a success, not execuring any further instructions, with a default error message.
  */
 #define FAIL() FAIL_DESC("FAIL()")
-
 
 /**
  * Expect `__what` to be true, with a default error message in case of failure.
@@ -443,7 +427,6 @@ void _testbench_print_error(int stream, uint32_t level) {
     FAIL_DESC("ASSERT()"); \
   }
 
-
 /**
  * Expect `__what` to be true, with a custom formatted error message in case of failure.
  */
@@ -451,3 +434,11 @@ void _testbench_print_error(int stream, uint32_t level) {
   if (!(__what)) { \
     FAIL_DESC(__format, ## __VA_ARGS__); \
   }
+
+
+/*****************************************************************************/
+
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
