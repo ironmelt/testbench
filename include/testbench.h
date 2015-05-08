@@ -28,6 +28,10 @@
 extern "C" {
 #endif
 
+
+/*****************************************************************************/
+
+
 #include <fcntl.h>
 #include <setjmp.h>
 #include <stdbool.h>
@@ -43,7 +47,6 @@ extern "C" {
  * CONSTANTS DEFINITION
  */
 
-
 #define TESTBENCH_ERROR_STRING_MAX_LEN  255
 #define TESTBENCH_ERROR_BUF_LEN         255
 
@@ -51,7 +54,6 @@ extern "C" {
 /******************************************************************************
  * ANSI COLORS
  */
-
 
 #define TESTBENCH_ANSI_RESET            "\x1b[0m"
 #define TESTBENCH_ANSI_BOLD             "\x1b[1m"
@@ -64,7 +66,6 @@ extern "C" {
 /******************************************************************************
  * TYPES
  */
-
 
 /**
  * Indicates the type of block currently on top of the stack.
@@ -87,7 +88,6 @@ typedef enum testbench_block_type_e {
   BLOCK_IT
 
 } testbench_block_type_t;
-
 
 /**
  * The per-block context of the test.
@@ -126,7 +126,6 @@ typedef struct testbench_block_context_s {
 
 } testbench_block_context_t;
 
-
 /**
  * The global context of the test.
  */
@@ -154,7 +153,6 @@ typedef struct testbench_global_context_s {
  * STATIC VARIABLES
  */
 
-
 /**
  * The root context.
  */
@@ -168,7 +166,6 @@ testbench_block_context_t __testbench_root_context = {
   .teardown_udata = NULL
 };
 
-
 /**
  * Stack-allocated global context.
  */
@@ -178,7 +175,6 @@ testbench_global_context_t __testbench_global_context_tmp = {
   .failed = 0,
   .block_context = &__testbench_root_context
 };
-
 
 /**
  * The global context, initialized to the initial global context we just defined.
@@ -190,7 +186,6 @@ testbench_global_context_t * __testbench_global_context = &__testbench_global_co
 /******************************************************************************
  * STATIC FUNCTIONS
  */
-
 
 /**
  * Print an error message, observing the correct indentation level.
@@ -224,7 +219,6 @@ void _testbench_print_error(int stream, uint32_t level) {
  * HELPER MACROS
  */
 
-
 /**
  * Print a formatted line, observing the current context indentation level.
  */
@@ -245,16 +239,15 @@ void _testbench_print_error(int stream, uint32_t level) {
  * CONTROL MACROS
  */
 
-
 /**
  * Independent test function.
  */
 #define TEST(__name, __test_block) \
-  static void _testbench_block_ ## __name (testbench_global_context_t * __testbench_global_context, \
+  static void _testbench_block_ ## __name ( \
+      testbench_global_context_t * __testbench_global_context, \
       void * udata) { \
     __test_block; \
   }
-
 
 /**
  * Run a test function inside the current test context.
@@ -262,13 +255,13 @@ void _testbench_print_error(int stream, uint32_t level) {
 #define RUN(__name, __udata) \
   (_testbench_block_ ## __name (__testbench_global_context, (__udata)))
 
-
 /**
  * Enter new block.
  */
 #define DESCRIBE(__name, __describe_block) \
   { \
-    testbench_block_context_t * __testbench_parent_context = __testbench_global_context->block_context; \
+    testbench_block_context_t * __testbench_parent_context = \
+        __testbench_global_context->block_context; \
     testbench_block_context_t __testbench_local_context = { \
       .block_type       = BLOCK_DESCRIBE, \
       .level            = __testbench_parent_context->level + 1, \
@@ -283,29 +276,31 @@ void _testbench_print_error(int stream, uint32_t level) {
     __testbench_global_context->block_context = __testbench_parent_context; \
   }
 
-
 /**
  * Actual test context.
  *
  * A little explanations about what's going on here:
  *
- * First, a new block context is created, increasing the indentation level, and inheriting from setup and teardown
- * configuration. Two pipes are then created, one for the control, and one for the actual outputs of the test. After
- * this is done, we do a fork of the program.
+ * First, a new block context is created, increasing the indentation level, and inheriting from
+ * setup and teardown configuration. Two pipes are then created, one for the control, and one for
+ * the actual outputs of the test. After this is done, we do a fork of the program.
  *
- * The child, actually running the tests, has his stderr and studout redirected to the pipe we created before. The setup
- * function, if any, is called. Then, a jump point is set. This is where we will jump back in case of a failure of the
- * current test. Then, the actual code of the tests are ran, and the teardown function, if any, is called.
+ * The child, actually running the tests, has his stderr and studout redirected to the pipe we
+ * created before. The setup function, if any, is called. Then, a jump point is set. This is where
+ * we will jump back in case of a failure of the current test. Then, the actual code of the tests
+ * are ran, and the teardown function, if any, is called.
  *
- * The parent process waits for the thread to finish. If it terminates with a value of 0, the test is successful, so we
- * can log it, and discard the pipe. If not, we will actually print the outputs of the test to the console from the
- * pipe, and increment the number of failed tests.
+ * The parent process waits for the thread to finish. If it terminates with a value of 0, the test
+ * is successful, so we can log it, and discard the pipe. If not, we will actually print the outputs
+ * of the test to the console from the pipe, and increment the number of failed tests.
  *
- * Before returning, the previous context is restored, and the total number of executes tests is incremented.
+ * Before returning, the previous context is restored, and the total number of executes tests is
+ * incremented.
  */
 #define IT(__name, __it_block) \
   { \
-    testbench_block_context_t * __testbench_parent_context = __testbench_global_context->block_context; \
+    testbench_block_context_t * __testbench_parent_context = \
+        __testbench_global_context->block_context; \
     testbench_block_context_t __testbench_local_context = { \
       .block_type       = BLOCK_IT, \
       .level            = __testbench_parent_context->level + 1, \
@@ -326,8 +321,10 @@ void _testbench_print_error(int stream, uint32_t level) {
       close(__testbench_output_pipe[0]); \
       int __testbench_putput_pipe_1_dup = dup2(__testbench_output_pipe[1], 1); \
       int __testbench_putput_pipe_2_dup = dup2(__testbench_output_pipe[1], 2); \
-      fcntl(__testbench_putput_pipe_1_dup, F_SETFL, fcntl(__testbench_putput_pipe_1_dup, F_GETFL) | O_NONBLOCK); \
-      fcntl(__testbench_putput_pipe_2_dup, F_SETFL, fcntl(__testbench_putput_pipe_2_dup, F_GETFL) | O_NONBLOCK); \
+      fcntl(__testbench_putput_pipe_1_dup, F_SETFL, \
+          fcntl(__testbench_putput_pipe_1_dup, F_GETFL) | O_NONBLOCK); \
+      fcntl(__testbench_putput_pipe_2_dup, F_SETFL, \
+          fcntl(__testbench_putput_pipe_2_dup, F_GETFL) | O_NONBLOCK); \
       void * fixtures = __testbench_local_context.setup ? \
         __testbench_local_context.setup(__testbench_local_context.setup_udata) : NULL; \
       jmp_buf __testbench_jmp_buf; \
@@ -339,7 +336,8 @@ void _testbench_print_error(int stream, uint32_t level) {
       } \
       close(__testbench_output_pipe[1]); \
       __testbench_local_context.teardown ? \
-        __testbench_local_context.teardown(__testbench_local_context.teardown_udata, fixtures) : NULL; \
+          __testbench_local_context.teardown(__testbench_local_context.teardown_udata, fixtures) : \
+          NULL; \
       write(__testbench_control_pipe[1], &__testbench_error, TESTBENCH_ERROR_STRING_MAX_LEN); \
       exit(!__testbench_pass); \
     } else { \
@@ -353,17 +351,21 @@ void _testbench_print_error(int stream, uint32_t level) {
     ++(__testbench_global_context->total); \
     if (!__testbench_pass) { \
       ++(__testbench_global_context->failed); \
-      __TESTBENCH_PRINT(TESTBENCH_ANSI_COLOR_RED "✗ " TESTBENCH_ANSI_COLOR_LIGHT_GRAY __name TESTBENCH_ANSI_RESET); \
+      __TESTBENCH_PRINT( \
+          TESTBENCH_ANSI_COLOR_RED "✗ " \
+          TESTBENCH_ANSI_COLOR_LIGHT_GRAY __name TESTBENCH_ANSI_RESET); \
       if (__testbench_error[0] != '\0') { \
-         __TESTBENCH_PRINT(TESTBENCH_ANSI_COLOR_RED "  %s" TESTBENCH_ANSI_RESET, (char *) &__testbench_error); \
+        __TESTBENCH_PRINT( \
+            TESTBENCH_ANSI_COLOR_RED "  %s" TESTBENCH_ANSI_RESET, (char *) &__testbench_error); \
          _testbench_print_error(__testbench_output_pipe[0], __testbench_local_context.level); \
       } \
     } else { \
-      __TESTBENCH_PRINT(TESTBENCH_ANSI_COLOR_GREEN "✓ " TESTBENCH_ANSI_COLOR_DARK_GRAY __name TESTBENCH_ANSI_RESET); \
+      __TESTBENCH_PRINT( \
+          TESTBENCH_ANSI_COLOR_GREEN "✓ " \
+          TESTBENCH_ANSI_COLOR_DARK_GRAY __name TESTBENCH_ANSI_RESET); \
     } \
     __testbench_global_context->block_context = __testbench_parent_context; \
   }
-
 
 /**
  * Print the results, and return the program exit code.
@@ -371,12 +373,14 @@ void _testbench_print_error(int stream, uint32_t level) {
 #define RESULTS() \
   ({ \
     if (!__testbench_global_context->failed) { \
-      printf(TESTBENCH_ANSI_BOLD TESTBENCH_ANSI_COLOR_GREEN "\n✓ %u test%s complete.\n\n" TESTBENCH_ANSI_RESET, \
-        __testbench_global_context->total, __testbench_global_context->total == 1 ? "" : "s"); \
+      printf(TESTBENCH_ANSI_BOLD TESTBENCH_ANSI_COLOR_GREEN \
+          "\n✓ %u test%s complete.\n\n" TESTBENCH_ANSI_RESET, \
+          __testbench_global_context->total, __testbench_global_context->total == 1 ? "" : "s"); \
     } else { \
-      printf(TESTBENCH_ANSI_BOLD TESTBENCH_ANSI_COLOR_RED "\n✗ %u test%s out of %u failed.\n\n" TESTBENCH_ANSI_RESET, \
-        __testbench_global_context->failed, __testbench_global_context->failed == 1 ? "" : "s", \
-        __testbench_global_context->total); \
+      printf(TESTBENCH_ANSI_BOLD TESTBENCH_ANSI_COLOR_RED \
+          "\n✗ %u test%s out of %u failed.\n\n" TESTBENCH_ANSI_RESET, \
+          __testbench_global_context->failed, __testbench_global_context->failed == 1 ? "" : "s", \
+          __testbench_global_context->total); \
     } \
     !!__testbench_global_context->failed; \
   })
@@ -395,7 +399,6 @@ void _testbench_print_error(int stream, uint32_t level) {
     __testbench_global_context->block_context->setup_udata = (__udata); \
   })
 
-
 /**
  * Set the teardown function, in the current context.
  */
@@ -410,30 +413,27 @@ void _testbench_print_error(int stream, uint32_t level) {
  * BASIC ASSERTION MACROS
  */
 
-
 /**
  * Consider the current test as a success, not execuring any further instructions.
  */
 #define PASS() longjmp(__testbench_jmp_buf, 2)
 
-
 /**
- * Consider the current test as a failure, not execuring any further instructions, with a custom formatted error
- * message.
+ * Consider the current test as a failure, not execuring any further instructions, with a custom
+ * formatted error message.
  */
 #define FAIL_DESC(__format, ...) \
   ({ \
-    snprintf((char *) &__testbench_error, TESTBENCH_ERROR_STRING_MAX_LEN, __format " -- %s:%i", ## __VA_ARGS__, \
-      __FILE__, __LINE__); \
+    snprintf((char *) &__testbench_error, TESTBENCH_ERROR_STRING_MAX_LEN, __format " -- %s:%i", \
+        ## __VA_ARGS__, __FILE__, __LINE__); \
     longjmp(__testbench_jmp_buf, 1); \
   })
 
-
 /**
- * Consider the current test as a success, not execuring any further instructions, with a default error message.
+ * Consider the current test as a success, not execuring any further instructions, with a default
+ * error message.
  */
 #define FAIL() FAIL_DESC("FAIL()")
-
 
 /**
  * Expect `__what` to be true, with a default error message in case of failure.
@@ -443,7 +443,6 @@ void _testbench_print_error(int stream, uint32_t level) {
     FAIL_DESC("ASSERT()"); \
   }
 
-
 /**
  * Expect `__what` to be true, with a custom formatted error message in case of failure.
  */
@@ -451,3 +450,11 @@ void _testbench_print_error(int stream, uint32_t level) {
   if (!(__what)) { \
     FAIL_DESC(__format, ## __VA_ARGS__); \
   }
+
+
+/*****************************************************************************/
+
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
