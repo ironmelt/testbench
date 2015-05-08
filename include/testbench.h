@@ -320,8 +320,8 @@ void _testbench_print_error(int stream, uint32_t level) {
     int __testbench_control_pipe[2], __testbench_output_pipe[2]; \
     pipe(__testbench_control_pipe); \
     pipe(__testbench_output_pipe); \
-    pid_t c_pid = fork(); \
-    if(c_pid == 0) { \
+    pid_t __testbench_fork_pid = fork(); \
+    if(__testbench_fork_pid == 0) { \
       close(__testbench_control_pipe[0]); \
       close(__testbench_output_pipe[0]); \
       int __testbench_putput_pipe_1_dup = dup2(__testbench_output_pipe[1], 1); \
@@ -346,9 +346,9 @@ void _testbench_print_error(int stream, uint32_t level) {
       close(__testbench_control_pipe[1]); \
       close(__testbench_output_pipe[1]); \
       read(__testbench_control_pipe[0], &__testbench_error, TESTBENCH_ERROR_STRING_MAX_LEN); \
-      int status; \
-      waitpid(c_pid, &status, 0); \
-      __testbench_pass = !status; \
+      int __testbench_child_exit_code; \
+      waitpid(__testbench_fork_pid, &__testbench_child_exit_code, 0); \
+      __testbench_pass = !__testbench_child_exit_code; \
     } \
     ++(__testbench_global_context->total); \
     if (!__testbench_pass) { \
