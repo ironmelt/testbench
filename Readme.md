@@ -1,6 +1,6 @@
 # Testbench
 
-(Damn-)simple block-testing framework for C, based on macros, with a sexy sugar-candy syntax.
+(Damn-)simple block-testing framework for C, based on macros, with a sexy eye-candy syntax.
 
 ## Installation
 
