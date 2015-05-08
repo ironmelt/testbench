@@ -1,0 +1,45 @@
+#
+# GENERAL IGNORES
+#
+
+# Ignore Mac specific files.
+.DS_Store
+
+# Ignore temporary files.
+~*
+
+
+#
+# GENERIC C/C++ IGNORES
+#
+# Shouldn't be necessary, but you never know...
+#
+
+# Ignore compiled object files.
+*.slo
+*.lo
+*.o
+*.obj
+
+# Ignore precompiled headers.
+*.gch
+*.pch
+
+# Ignore compiled dynamic libraries.
+*.so
+*.dylib
+*.dll
+
+# Ignore fortran module files.
+*.mod
+
+# Ignore compiled static libraries.
+*.lai
+*.la
+*.a
+*.lib
+
+# Ignore executables.
+*.exe
+*.out
+*.app
