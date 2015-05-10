@@ -242,7 +242,7 @@ void _testbench_print_error(int stream, uint32_t level) {
 /**
  * Independent test function.
  */
-#define TEST(__name, __test_block) \
+#define TEST(__name, __test_block...) \
   static void _testbench_block_ ## __name ( \
       testbench_global_context_t * __testbench_global_context, \
       void * udata) { \
@@ -258,7 +258,7 @@ void _testbench_print_error(int stream, uint32_t level) {
 /**
  * Enter new block.
  */
-#define DESCRIBE(__name, __describe_block) \
+#define DESCRIBE(__name, __describe_block...) \
   { \
     testbench_block_context_t * __testbench_parent_context = \
         __testbench_global_context->block_context; \
@@ -297,7 +297,7 @@ void _testbench_print_error(int stream, uint32_t level) {
  * Before returning, the previous context is restored, and the total number of executes tests is
  * incremented.
  */
-#define IT(__name, __it_block) \
+#define IT(__name, __it_block...) \
   { \
     testbench_block_context_t * __testbench_parent_context = \
         __testbench_global_context->block_context; \
