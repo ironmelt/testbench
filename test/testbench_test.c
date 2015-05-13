@@ -173,7 +173,7 @@ TEST(testbench_fail_desc, {
 TEST(testbench_run_context, {
 
   IT("P / should pass user data", {
-    ASSERT((int) udata == 42)
+    ASSERT((intptr_t) udata == 42)
   })
 
 })
@@ -192,14 +192,14 @@ TEST(testbench_fixtures, {
 
   DESCRIBE("fixtures", {
 
-    int * test_udata = malloc(sizeof(int));
+    int * test_udata = malloc(sizeof(intptr_t));
     *test_udata = 42;
 
     SETUP(_testbench_fixture_setup, test_udata);
     TEARDOWN(_testbench_fixture_teardown, test_udata);
 
     IT("P / should run setup", {
-      ASSERT((int) fixtures == 42);
+      ASSERT((intptr_t) fixtures == 42);
     })
 
     IT("P / should run teardown", {
