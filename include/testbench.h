@@ -31,6 +31,7 @@ extern "C" {
 
 /*****************************************************************************/
 
+#define _GNU_SOURCE
 
 #include <fcntl.h>
 #include <setjmp.h>
