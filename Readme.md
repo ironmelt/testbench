@@ -1,4 +1,4 @@
-# Testbench
+# Testbench [![Build Status](https://travis-ci.org/ironmelt/testbench.svg?branch=master)](https://travis-ci.org/ironmelt/testbench)
 
 (Damn-)simple block-testing framework for C, based on macros, with a sexy eye-candy syntax.
 
