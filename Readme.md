@@ -4,7 +4,7 @@
 
 ## Installation
 
-Testbench is a header-only library. Just include ```testbench.h``` in the header of your test file, and you're basically
+Testbench is a header-only library. Just include `testbench.h` in the header of your test file, and you're basically
 done.
 
 ## Usage
@@ -46,7 +46,7 @@ Program
 
 The default logging for failures gives you the file where the failing test is, and the line that has resulted in a
 failure. If you want some more debugging upon failure, this may be a little insufficient. A solution is to use the
-```ASSERT_DESC``` macro:
+`ASSERT_DESC` macro:
 
 ```c
 #include <testbench.h>

@@ -214,6 +214,19 @@ void _testbench_print_error(int stream, uint32_t level) {
   }
 }
 
+/**
+ *
+ */
+static
+void _testbench_set_pipe_dup(int stream) {
+#ifndef TESTBENCH_NO_PIPE_OUTPUT
+  int stream_1_dup = dup2(stream, 1);
+  int stream_2_dup = dup2(stream, 2);
+  fcntl(stream_1_dup, F_SETFL, fcntl(stream_1_dup, F_GETFL) | O_NONBLOCK);
+  fcntl(stream_2_dup, F_SETFL, fcntl(stream_2_dup, F_GETFL) | O_NONBLOCK);
+#endif
+}
+
 
 /******************************************************************************
  * HELPER MACROS
@@ -319,12 +332,7 @@ void _testbench_print_error(int stream, uint32_t level) {
     if(__testbench_fork_pid == 0) { \
       close(__testbench_control_pipe[0]); \
       close(__testbench_output_pipe[0]); \
-      int __testbench_putput_pipe_1_dup = dup2(__testbench_output_pipe[1], 1); \
-      int __testbench_putput_pipe_2_dup = dup2(__testbench_output_pipe[1], 2); \
-      fcntl(__testbench_putput_pipe_1_dup, F_SETFL, \
-          fcntl(__testbench_putput_pipe_1_dup, F_GETFL) | O_NONBLOCK); \
-      fcntl(__testbench_putput_pipe_2_dup, F_SETFL, \
-          fcntl(__testbench_putput_pipe_2_dup, F_GETFL) | O_NONBLOCK); \
+      _testbench_set_pipe_dup(__testbench_output_pipe[1]); \
       void * fixtures = __testbench_local_context.setup ? \
         __testbench_local_context.setup(__testbench_local_context.setup_udata) : NULL; \
       jmp_buf __testbench_jmp_buf; \

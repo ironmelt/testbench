@@ -61,6 +61,12 @@ TEST(testbench_assert, {
       ASSERT(false);
     })
 
+    IT("F / should display output on fail [two messages under this line]", {
+      fprintf(stdout, "A message on STDOUT.\n");
+      fprintf(stderr, "A message on STDERR.\n");
+      FAIL();
+    })
+
   })
 
 })
