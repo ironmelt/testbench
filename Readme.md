@@ -91,5 +91,5 @@ not be exempt of bugs, and its API could change at any time.
 
 ## License
 
-Testbench is made available under the terms of the GNU Affero General Public
-License version 3, as stated in the file ```LICENSE```.
+Testbench is made available under the terms of the GNU Lesser General Public License version 3, as stated in the file
+```LICENSE```.
