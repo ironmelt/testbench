@@ -1,4 +1,4 @@
-## Head
+## Release 0.2.0
 
 * Fixed tests behavior, so expected fails are counted.
 * Added nice display when a test process is killed by a signal.
