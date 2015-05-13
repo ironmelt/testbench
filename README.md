@@ -83,11 +83,15 @@ Program
 Testbench also supports setup and teardown functions for fixtures, and test functions. See the `testbench_test.c`
 file for usage examples.
 
-
 ## Note
 
-Testbench is an early (very early) release, and though we are quite confident that it is functional at the time, it may
-not be exempt of bugs, and its API could change at any time.
+Testbench is an early release, and though we are quite confident that it is functional at the time, it may
+not be exempt of bugs.
+
+## Bug reports and feature requests
+
+You are very welcome to contribute to Testbench. To do so, simply report bugs, submit feature requests or make pull
+requests on Github: https://github.com/ironmelt/testbench.
 
 ## License
 
