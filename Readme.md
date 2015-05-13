@@ -80,7 +80,7 @@ Program
 
 ### And more
 
-Testbench also supports setup and teardown functions for fixtures, and test functions. See the ```testbench_test.c```
+Testbench also supports setup and teardown functions for fixtures, and test functions. See the `testbench_test.c`
 file for usage examples.
 
 
@@ -91,5 +91,5 @@ not be exempt of bugs, and its API could change at any time.
 
 ## License
 
-Testbench is made available under the terms of the GNU Lesser General Public License version 3, as stated in the file
-```LICENSE```.
+Testbench is made available under the terms of the GNU Lesser General Public License version 3, as stated in the
+`LICENSE` file.
