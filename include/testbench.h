@@ -328,6 +328,7 @@ void _testbench_set_pipe_dup(int stream) {
     int __testbench_control_pipe[2], __testbench_output_pipe[2]; \
     pipe(__testbench_control_pipe); \
     pipe(__testbench_output_pipe); \
+    int __testbench_child_status; \
     pid_t __testbench_fork_pid = fork(); \
     if(__testbench_fork_pid == 0) { \
       close(__testbench_control_pipe[0]); \
@@ -352,9 +353,8 @@ void _testbench_set_pipe_dup(int stream) {
       close(__testbench_control_pipe[1]); \
       close(__testbench_output_pipe[1]); \
       read(__testbench_control_pipe[0], &__testbench_error, TESTBENCH_ERROR_STRING_MAX_LEN); \
-      int __testbench_child_exit_code; \
-      waitpid(__testbench_fork_pid, &__testbench_child_exit_code, 0); \
-      __testbench_pass = !__testbench_child_exit_code; \
+      waitpid(__testbench_fork_pid, &__testbench_child_status, 0); \
+      __testbench_pass = !__testbench_child_status; \
     } \
     ++(__testbench_global_context->total); \
     if (!__testbench_pass) { \
@@ -362,6 +362,11 @@ void _testbench_set_pipe_dup(int stream) {
       __TESTBENCH_PRINT( \
           TESTBENCH_ANSI_COLOR_RED "✗ " \
           TESTBENCH_ANSI_COLOR_LIGHT_GRAY __name TESTBENCH_ANSI_RESET); \
+      if (WIFSIGNALED(__testbench_child_status)) { \
+        __TESTBENCH_PRINT( \
+          TESTBENCH_ANSI_COLOR_RED "  Terminated by signal – %s" TESTBENCH_ANSI_RESET, \
+          strsignal(WTERMSIG(__testbench_child_status))); \
+      } \
       if (__testbench_error[0] != '\0') { \
         __TESTBENCH_PRINT( \
             TESTBENCH_ANSI_COLOR_RED "  %s" TESTBENCH_ANSI_RESET, (char *) &__testbench_error); \
