@@ -328,8 +328,10 @@ void _testbench_set_pipe_dup(int stream) {
       bool __testbench_pass = true; \
       char __testbench_error[TESTBENCH_ERROR_STRING_MAX_LEN] = ""; \
       int __testbench_control_pipe[2], __testbench_output_pipe[2]; \
-      pipe(__testbench_control_pipe); \
-      pipe(__testbench_output_pipe); \
+      if (pipe(__testbench_control_pipe) || pipe(__testbench_output_pipe)) { \
+        fprintf(stderr, "Unable to open pipe."); \
+        exit(1); \
+      } \
       int __testbench_child_status; \
       pid_t __testbench_fork_pid = fork(); \
       if(__testbench_fork_pid == 0) { \
@@ -349,12 +351,18 @@ void _testbench_set_pipe_dup(int stream) {
         __testbench_local_context.teardown ? \
             __testbench_local_context.teardown(__testbench_local_context.teardown_udata, fixtures) : \
             NULL; \
-        write(__testbench_control_pipe[1], &__testbench_error, TESTBENCH_ERROR_STRING_MAX_LEN); \
+        if (write(__testbench_control_pipe[1], &__testbench_error, TESTBENCH_ERROR_STRING_MAX_LEN) == -1) { \
+          fprintf(stderr, "Unable to write to pipe."); \
+          exit(1); \
+        } \
         exit(!__testbench_pass); \
       } else { \
         close(__testbench_control_pipe[1]); \
         close(__testbench_output_pipe[1]); \
-        read(__testbench_control_pipe[0], &__testbench_error, TESTBENCH_ERROR_STRING_MAX_LEN); \
+        if (read(__testbench_control_pipe[0], &__testbench_error, TESTBENCH_ERROR_STRING_MAX_LEN) == -1) { \
+          fprintf(stderr, "Unable to read from pipe."); \
+          exit(1); \
+        } \
         waitpid(__testbench_fork_pid, &__testbench_child_status, 0); \
         __testbench_pass = !__testbench_child_status; \
       } \
