@@ -3,7 +3,7 @@
 test: build-test run-test clean
 
 build-test:
-	@cc -otestbench_test -Iinclude/ test/testbench_test.c
+	@cc -std=c99 -otestbench_test -Iinclude/ test/testbench_test.c
 
 run-test:
 	@./testbench_test

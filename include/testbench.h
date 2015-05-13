@@ -204,7 +204,7 @@ void _testbench_print_error(int stream, uint32_t level) {
     }
     fprintf(stderr, "%c", buf);
     if (buf == '\n') {
-      for (int d = 0; d < level; ++d) {
+      for (uint32_t d = 0; d < level; ++d) {
         fprintf(stderr, "  ");
       }
     }
@@ -242,7 +242,7 @@ void _testbench_set_pipe_dup(int stream) {
       if (level == 1) { \
         fprintf(stderr, "\n" TESTBENCH_ANSI_BOLD); \
       } \
-      for (int d = 0; level && d < level - 1; ++d) { \
+      for (uint32_t d = 0; level && d < level - 1; ++d) { \
         fprintf(stderr, "  "); \
       } \
       fprintf(stderr, __format TESTBENCH_ANSI_RESET "\n", ## __VA_ARGS__); \
