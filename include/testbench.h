@@ -158,11 +158,11 @@ typedef struct testbench_global_context_s {
  */
 static
 testbench_block_context_t __testbench_root_context = {
-  .block_type       = BLOCK_ROOT,
-  .level            = 0,
-  .setup            = NULL,
+  .block_type     = BLOCK_ROOT,
+  .level          = 0,
+  .setup          = NULL,
   .setup_udata    = NULL,
-  .teardown         = NULL,
+  .teardown       = NULL,
   .teardown_udata = NULL
 };
 
@@ -241,7 +241,7 @@ void _testbench_set_pipe_dup(int stream) {
       if (level == 1) { \
         fprintf(stderr, "\n" TESTBENCH_ANSI_BOLD); \
       } \
-      for (int d = 0; d < level - 1; ++d) { \
+      for (int d = 0; level && d < level - 1; ++d) { \
         fprintf(stderr, "  "); \
       } \
       fprintf(stderr, __format TESTBENCH_ANSI_RESET "\n", ## __VA_ARGS__); \

@@ -26,6 +26,32 @@
 
 
 /******************************************************************************
+ * GLOBAL VARIABLES
+ */
+
+uint32_t __testbench_test_failed_to_fail = 0;
+
+
+/******************************************************************************
+ * TEST HELPER MACROS
+ */
+
+#define MUST_FAIL(__must_fail_block...) \
+    { \
+      uint32_t __must_fail_diff = __testbench_global_context->total - __testbench_global_context->failed; \
+      __must_fail_block; \
+      if (__testbench_global_context->total - __testbench_global_context->failed == __must_fail_diff) { \
+        __TESTBENCH_PRINT( \
+            TESTBENCH_ANSI_COLOR_GREEN "    ✓ This test was supposed to fail and did so" TESTBENCH_ANSI_RESET); \
+      } else { \
+        __TESTBENCH_PRINT( \
+            TESTBENCH_ANSI_COLOR_RED "    ✗ This test was supposed to fail and didn't" TESTBENCH_ANSI_RESET); \
+        ++__testbench_test_failed_to_fail; \
+      } \
+    }
+
+
+/******************************************************************************
  * TEST FIXTURES
  */
 
@@ -57,14 +83,18 @@ TEST(testbench_assert, {
       ASSERT(true);
     })
 
-    IT("F / should assert false correctly", {
-      ASSERT(false);
+    MUST_FAIL({
+      IT("F / should assert false correctly", {
+        ASSERT(false);
+      })
     })
 
-    IT("F / should display output on fail [two messages under this line]", {
-      fprintf(stdout, "A message on STDOUT.\n");
-      fprintf(stderr, "A message on STDERR.\n");
-      FAIL();
+    MUST_FAIL({
+      IT("F / should display output on fail [two messages under this line]", {
+        fprintf(stdout, "A message on STDOUT.\n");
+        fprintf(stderr, "A message on STDERR.\n");
+        FAIL();
+      })
     })
 
   })
@@ -80,8 +110,10 @@ TEST(testbench_assert_desc, {
       ASSERT_DESC(true, "SHOULD NOT DISPLAY");
     })
 
-    IT("F / should assert false correctly, and display \"a nice message\"", {
-      ASSERT_DESC(false, "a %s message", "nice");
+    MUST_FAIL({
+      IT("F / should assert false correctly, and display \"a nice message\"", {
+        ASSERT_DESC(false, "a %s message", "nice");
+      })
     })
 
   })
@@ -96,6 +128,7 @@ TEST(testbench_pass, {
     IT("P / should pass, and not execute any further instruction", {
       PASS();
       FAIL_DESC("SHOULD NOT DISPLAY");
+      ++__testbench_test_failed_to_fail;
     })
 
   })
@@ -107,9 +140,12 @@ TEST(testbench_fail, {
 
   DESCRIBE("FAIL()", {
 
-    IT("F / should fail, and not execute any further instruction", {
-      FAIL();
-      FAIL_DESC("SHOULD NOT DISPLAY");
+    MUST_FAIL({
+      IT("F / should fail, and not execute any further instruction", {
+        FAIL();
+        FAIL_DESC("SHOULD NOT DISPLAY");
+        ++__testbench_test_failed_to_fail;
+      })
     })
 
   })
@@ -121,9 +157,12 @@ TEST(testbench_fail_desc, {
 
   DESCRIBE("FAIL()", {
 
-    IT("F / should fail, not execute any further instruction, and display \"a nice message\"", {
-      FAIL_DESC("a %s message", "nice");
-      FAIL_DESC("SHOULD NOT DISPLAY");
+    MUST_FAIL({
+      IT("F / should fail, not execute any further instruction, and display \"a nice message\"", {
+        FAIL_DESC("a %s message", "nice");
+        FAIL_DESC("SHOULD NOT DISPLAY");
+        ++__testbench_test_failed_to_fail;
+      })
     })
 
   })
@@ -195,5 +234,17 @@ int main() {
 
   RESULTS();
 
-  return 0;
+  if (!__testbench_test_failed_to_fail) {
+    fprintf(
+        stderr,
+        TESTBENCH_ANSI_BOLD TESTBENCH_ANSI_COLOR_GREEN
+        "✓ All tests expected to fail have failed.\n\n" TESTBENCH_ANSI_RESET);
+  } else {
+    fprintf(
+        stderr,
+        TESTBENCH_ANSI_BOLD TESTBENCH_ANSI_COLOR_RED
+        "✗ Some tests expected to fail didn't.\n\n" TESTBENCH_ANSI_RESET);
+  }
+
+  return (int) !!__testbench_test_failed_to_fail;
 }
