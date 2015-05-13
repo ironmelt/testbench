@@ -4,7 +4,7 @@
 
 ## Installation
 
-Testbench is a header-only library. Just include `testbench.h` in the header of your test file, and you're basically
+Testbench is a header-only library. Just include `testbench.h` in the your test file, and you're basically
 done.
 
 ## Usage
