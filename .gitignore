@@ -8,6 +8,8 @@
 # Ignore temporary files.
 ~*
 
+# Ignore IDE
+.idea
 
 #
 # GENERIC C/C++ IGNORES
