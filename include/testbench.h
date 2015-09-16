@@ -57,12 +57,21 @@ extern "C" {
  * ANSI COLORS
  */
 
-#define TESTBENCH_ANSI_RESET            "\x1b[0m"
-#define TESTBENCH_ANSI_BOLD             "\x1b[1m"
-#define TESTBENCH_ANSI_COLOR_RED        "\x1b[31m"
-#define TESTBENCH_ANSI_COLOR_GREEN      "\x1b[32m"
-#define TESTBENCH_ANSI_COLOR_LIGHT_GRAY "\x1b[37m"
-#define TESTBENCH_ANSI_COLOR_DARK_GRAY  "\x1b[90m"
+#ifdef TESTBENCH_COLORS
+  #define TESTBENCH_ANSI_RESET            "\x1b[0m"
+  #define TESTBENCH_ANSI_BOLD             "\x1b[1m"
+  #define TESTBENCH_ANSI_COLOR_RED        "\x1b[31m"
+  #define TESTBENCH_ANSI_COLOR_GREEN      "\x1b[32m"
+  #define TESTBENCH_ANSI_COLOR_LIGHT_GRAY "\x1b[37m"
+  #define TESTBENCH_ANSI_COLOR_DARK_GRAY  "\x1b[90m"
+#else
+  #define TESTBENCH_ANSI_RESET            ""
+  #define TESTBENCH_ANSI_BOLD             ""
+  #define TESTBENCH_ANSI_COLOR_RED        ""
+  #define TESTBENCH_ANSI_COLOR_GREEN      ""
+  #define TESTBENCH_ANSI_COLOR_LIGHT_GRAY ""
+  #define TESTBENCH_ANSI_COLOR_DARK_GRAY  ""
+#endif
 
 
 /******************************************************************************
