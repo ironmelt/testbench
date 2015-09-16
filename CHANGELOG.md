@@ -1,3 +1,7 @@
+## Release 0.2.1
+
+* Added color switch.
+
 ## Release 0.2.0
 
 * Fixed tests behavior, so expected fails are counted.
